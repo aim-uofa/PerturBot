@@ -1,0 +1,40 @@
+# Python and tooling
+__pycache__/
+*.py[cod]
+.venv/
+.venv-*/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+# Local data, model artifacts, and run metadata are not source code.
+/data/
+/raw_data/
+/checkpoints/
+/models/
+/outputs/
+/logs/
+/wandb/
+/policy_records/
+/.cache/
+/assets/*
+!/assets/README.md
+*.log
+*.safetensors
+*.pt
+*.pth
+*.npz
+*.npy
+*.wandb
+# Credentials and machine-local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.vscode/
+.idea/
+.DS_Store

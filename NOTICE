@@ -1,0 +1,11 @@
+This source distribution is based on openpi by Physical Intelligence:
+https://github.com/Physical-Intelligence/openpi
+
+The upstream Apache License 2.0 and bundled Gemma terms are retained in LICENSE
+and LICENSE_GEMMA.txt. Copyright notices in inherited source files are preserved.
+
+This distribution adds portable PiperX data conversion, training launch,
+normalization, inference examples, checkpoint export and source-audit utilities.
+It is not an official Physical Intelligence release and does not imply their
+endorsement. Model weights and datasets are not included; their distribution and
+use require independent review of the applicable licenses and permissions.
