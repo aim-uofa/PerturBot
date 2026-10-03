@@ -1,121 +1,92 @@
-# openpi — portable PiperX π₀.₅
+<div align="center">
 
-A focused training and inference release based on [Physical Intelligence's openpi](https://github.com/Physical-Intelligence/openpi).
-It retains the JAX model implementation and adds a portable PiperX data pipeline, **single-node 8-GPU launcher**, local inference, and an optional WebSocket service.
+<h1>PerturBot: Breaking Shortcut Priors in<br>Vision-Language-Action Models with Perturbative Training</h1>
 
-[中文说明](README_zh.md) · [Training](docs/training.md) · [Inference](docs/inference.md) · [Checkpoints](docs/checkpoints.md)
+<p>
+  <b>Mingyu Liu</b><sup>1,2,*</sup> · <b>Chonghao Sima</b><sup>3,*</sup> · <b>Tianjian Feng</b><sup>1</sup> · <b>Hanqing Wang</b><sup>4</sup><br>
+  <b>Cong Chen</b><sup>1</sup> · <b>Hao Chen</b><sup>1,†</sup> · <b>Chunhua Shen</b><sup>1,†</sup>
+</p>
 
-## What is included
+<p>
+  <sup>1</sup> Zhejiang University &nbsp; <sup>2</sup> Shanghai Innovation Institute<br>
+  <sup>3</sup> University of Hong Kong &nbsp; <sup>4</sup> HKUST(GZ)<br>
+  <sup>*</sup> Equal contribution &nbsp; <sup>†</sup> Corresponding authors
+</p>
 
-- Three RGB cameras and a 14-dimensional dual-arm/gripper interface.
-- Manifest-driven conversion to the **pinned LeRobot v2.1** dataset format.
-- π₀.₅ fine-tuning with global batch 256 and 8-way FSDP; one JAX process, **not `torchrun`**.
-- CPU normalization over all selected frames, deterministic episode holdout, optional validation and local JSONL metrics.
-- In-process inference with **no port required**, or an explicitly configurable loopback WebSocket server.
-- A source audit and an inference-only checkpoint exporter.
+<p><a href="https://openreview.net/forum?id=r7zfsysr22">📄 Paper (OpenReview)</a> &nbsp;·&nbsp; <a href="#quick-start">🚀 Quick start</a> &nbsp;·&nbsp; <a href="#citation">Citation</a> &nbsp;·&nbsp; <a href="README_zh.md">中文</a></p>
 
-No training data, private normalization statistics, fine-tuned weights, credentials, corporate endpoints, run logs, or original Git history are distributed. This is not an official Physical Intelligence release. Code availability does not imply permission to redistribute training data or weights.
+</div>
 
-## Requirements
+## Overview
 
-- Linux x86-64; Python **3.11**; `git` and [uv](https://docs.astral.sh/uv/).
-- For the documented full fine-tuning recipe: **one machine with 8 NVIDIA GPUs**, preferably A100-80GB / H100-80GB, and a CUDA 12-compatible driver. Eight small GPUs are not a guaranteed substitute.
-- Sufficient CPU RAM and disk for datasets, pretrained weights, optimizer state and retained checkpoints. An uncompressed full training checkpoint can be tens of GB; reserve several hundred GB for a run.
-- Public Internet access on first installation/asset download, or prepopulated caches. No company network or Google account is required for the public assets.
+A robot can succeed on familiar tasks while ignoring the evidence that should guide its actions: a salient object distracts it from the target, a familiar noun overrides a changed verb, or an empty grasp is followed by a lift. **PerturBot** addresses these *modality shortcuts* by changing what the policy learns from, rather than adding inference-time machinery.
 
-The lockfile pins JAX 0.5.3, Flax 0.10.2 and LeRobot to a specific public Git revision. Do not replace LeRobot with an arbitrary newer release.
+The paper combines three data interventions with an evidence-use diagnostic:
 
-## Quick start: data → statistics → 8-GPU training
+- **V — Wrist-view perturbation:** vary irrelevant visual cues while preserving the task and valid action supervision.
+- **C — Caption enrichment:** make the requested object, operation, and relevant state explicit in instructions consistent with the recorded actions.
+- **R — Trajectory expansion:** add screened random-motion and failed-execution segments, relabeled with the behavior they actually contain.
+- **GroundFscore:** use paired input edits to distinguish stability to irrelevant changes from responsiveness to task-relevant evidence, complementing task success rate.
 
-Run all commands from the repository root.
+<p align="center">
+  <a href="docs/assets/overview.svg"><img src="docs/assets/overview.svg" width="100%" alt="PerturBot overview: salience capture, noun lock-in, and motor inertia, with wrist-view perturbation, caption enrichment, and trajectory expansion."></a>
+</p>
+
+The paper evaluates the approach on real-robot General Pick and Place and RoboTwin 2.0. The main figure illustrates the shortcut behaviors and the three training interventions; inference remains unchanged.
+
+> **Current release:** this repository provides the [openpi](https://github.com/Physical-Intelligence/openpi)-based PiperX π₀.₅ training/inference backbone, data conversion, normalization, and checkpoint tools. The paper-specific V/C/R data-construction pipeline and GroundFscore evaluator are not included in this snapshot. Training data and fine-tuned weights are not distributed.
+
+## Quick start
+
+**Environment:** Linux x86-64, Python 3.11, [uv](https://docs.astral.sh/uv/), and a CUDA 12-compatible driver. Training uses one machine with **8 GPUs**; A100/H100 80 GB-class hardware is recommended.
+
+### 1. Install
 
 ```bash
-# 1. Install the locked environment; skip unrelated large Git LFS assets.
+git clone https://github.com/aim-uofa/PerturBot.git
+cd PerturBot
 GIT_LFS_SKIP_SMUDGE=1 uv sync --frozen
-
-# 2. Keep this setting in every conversion/statistics/training shell.
 export HF_LEROBOT_HOME="$PWD/data/lerobot"
+```
 
-# 3. Prepare your own episode manifest; see docs/training.md for the schema.
-#    Skip conversion if local/piperx already exists in LeRobot v2.1 format.
+### 2. Prepare data and train
+
+Prepare an episode manifest using the [data format](docs/training.md#2-data-contract). Skip conversion if you already have a compatible LeRobot v2.1 dataset at `local/piperx`.
+
+```bash
 uv run examples/piperx_real/convert_data.py \
-  --manifest /path/to/episodes.json \
-  --raw-root /path/to/raw_data \
+  --manifest /path/to/episodes.json --raw-root /path/to/raw_data \
   --repo-id local/piperx
-
-# 4. Compute dataset-specific statistics. Do NOT reuse an unrelated dataset's stats.
 JAX_PLATFORMS=cpu uv run scripts/compute_norm_stats.py \
   --config-name pi05_piperx --repo-id local/piperx
-
-# 5. Train: one host, eight visible GPUs, no cluster setup or rendezvous port.
 bash scripts/train_8gpu.sh --exp-name piperx_run --data.repo-id local/piperx
 ```
 
-The base weights are downloaded from `gs://openpi-assets/checkpoints/pi05_base/params` on first use. To prefetch, use `uv run scripts/prefetch_assets.py`. To use an existing local copy, append `--weight-loader.params-path /path/to/pi05_base/params` to training.
+The launcher runs one JAX process across eight GPUs, not `torchrun`. It loads the public π₀.₅ base weights and saves checkpoints under `checkpoints/pi05_piperx/piperx_run/`.
 
-Default outputs:
-
-```text
-assets/pi05_piperx/piperx/norm_stats.json
-checkpoints/pi05_piperx/piperx_run/
-├── run_info.json
-├── metrics.jsonl
-└── 15000/
-    ├── assets/piperx/norm_stats.json
-    ├── params/                 # EMA weights used for inference
-    └── train_state/            # training/optimizer state for resume
-```
-
-New checkpoints use **completed optimizer steps** (`15000` after 15000 updates). Older snapshots may use zero-based names such as `14999`; do not rename or reinterpret them blindly.
-
-## Inference
-
-Use the **step directory**, not `params/`:
+### 3. Run inference
 
 ```bash
-# Synthetic API smoke test only. Does not operate any robot.
 CUDA_VISIBLE_DEVICES=0 uv run examples/piperx_real/infer.py \
   --checkpoint checkpoints/pi05_piperx/piperx_run/15000 \
   --dummy --prompt 'Place the object on the plate.'
 ```
 
-For real observations, pass `--observation observation.npz` instead of `--dummy`. The NPZ contains `image`, `wrist_left_image`, `wrist_right_image` (RGB uint8 HWC) and `state` (float32, shape `(14,)`). Output is an absolute action chunk of shape `(10, 14)` in the demonstration's units. See the [input/action contract](docs/inference.md) before connecting hardware.
+`--dummy` checks the API only and does not operate a robot. For real observations, replace it with `--observation observation.npz`; use the checkpoint's matching normalization statistics and action convention, and follow the [input and safety contract](docs/inference.md).
 
-Optional remote interface:
+**More:** [Training / resume](docs/training.md) · [Inference / WebSocket](docs/inference.md) · [Checkpoint selection](docs/checkpoints.md) · [Tests and limitations](docs/validation.md)
 
-```bash
-CUDA_VISIBLE_DEVICES=0 uv run scripts/serve_policy.py \
-  --checkpoint checkpoints/pi05_piperx/piperx_run/15000 \
-  --host 127.0.0.1 --port 8000
+## Citation
 
-# In another shell:
-uv run examples/piperx_real/client.py --host 127.0.0.1 --port 8000
+```bibtex
+@misc{liu2026perturbot,
+  title={PerturBot: Breaking Shortcut Priors in Vision-Language-Action Models with Perturbative Training},
+  author={Mingyu Liu and Chonghao Sima and Tianjian Feng and Hanqing Wang and Cong Chen and Hao Chen and Chunhua Shen},
+  year={2026},
+  url={https://openreview.net/forum?id=r7zfsysr22}
+}
 ```
 
-The service has no authentication or TLS. It is local-only by default. Do not expose it directly to the Internet.
+## Acknowledgments and license
 
-## Important compatibility notes
-
-- The PiperX recipe keeps `action_horizon=10`, `discrete_state_input=False`, and the original state layout. The discrete-state setting differs from upstream π₀.₅ defaults; changing it is **not** a harmless deployment option.
-- `pi05_piperx` trains **delta joints + absolute grippers** and converts predictions back to absolute joint targets during inference.
-- `pi05_piperx_absolute` is for checkpoints trained on **absolute** actions. Choose the mode from the recorded training configuration, not today's edited configuration file.
-- Weights and normalization statistics must come from the **same training run and action convention**.
-- There is **no substantiated “best checkpoint” claim** in this source release. Training loss, validation action MSE, and real-robot success rate are different metrics; see [checkpoint selection](docs/checkpoints.md).
-
-## Tests and release review
-
-```bash
-JAX_PLATFORMS=cpu uv run pytest
-
-# Test real JAX sharding, validation, save/resume and parameter restoration using
-# a small synthetic model on eight virtual CPU devices. This is NOT an 8-GPU benchmark.
-JAX_PLATFORMS=cpu XLA_FLAGS=--xla_force_host_platform_device_count=8 \
-  uv run pytest tests/test_training_smoke.py -q
-
-uv run python scripts/audit_release.py
-bash scripts/train_8gpu.sh --dry-run --exp-name example
-```
-
-The default tests are offline/synthetic and do not download π₀.₅ weights or operate a robot. Some retained upstream tests outside the default test paths require large models or external datasets.
-
-See [validation results and limitations](docs/validation.md). Before publishing, complete the [release checklist](docs/release_checklist.md). Preserve [LICENSE](LICENSE), [LICENSE_GEMMA.txt](LICENSE_GEMMA.txt), and [NOTICE](NOTICE). Confirm the applicable model/data terms separately; this repository's code license does not automatically license a fine-tuned checkpoint or dataset.
+Built on [Physical Intelligence's openpi](https://github.com/Physical-Intelligence/openpi). We retain the upstream [Apache 2.0 license](LICENSE), [Gemma terms](LICENSE_GEMMA.txt), and [NOTICE](NOTICE). This is not an official Physical Intelligence release; data and model weights require their own permissions.
