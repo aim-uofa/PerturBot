@@ -1,10 +1,10 @@
 <div align="center">
 
-<h1>PerturBot: Breaking Shortcut Priors in<br>Vision-Language-Action Models with Perturbative Training</h1>
+<h1><img src="docs/assets/perturbot-logo.svg" width="40" alt="PerturBot logo"> PerturBot: Breaking Shortcut Priors in<br>Vision-Language-Action Models with Perturbative Training</h1>
 
 <p>
-  <b>Mingyu Liu</b><sup>1,2,*</sup> · <b>Chonghao Sima</b><sup>3,*</sup> · <b>Tianjian Feng</b><sup>1</sup> · <b>Hanqing Wang</b><sup>4</sup><br>
-  <b>Cong Chen</b><sup>1</sup> · <b>Hao Chen</b><sup>1,†</sup> · <b>Chunhua Shen</b><sup>1,†</sup>
+  <a href="https://mingyulau.github.io/"><b>Mingyu Liu</b></a><sup>1,2,*</sup> · <a href="https://chonghaosima.github.io/"><b>Chonghao Sima</b></a><sup>3,*</sup> · <a href=""><b>Tianjian Feng</b></a><sup>1</sup> · <a href="https://hq-king.github.io/"><b>Hanqing Wang</b></a><sup>4</sup><br>
+  <a href=""><b>Cong Chen</b></a><sup>1</sup> · <a href="https://stan-haochen.github.io/"><b>Hao Chen</b></a><sup>1,†</sup> · <a href="https://cshen.github.io/"><b>Chunhua Shen</b></a><sup>1,†</sup>
 </p>
 
 <p>
@@ -13,7 +13,7 @@
   <sup>*</sup> Equal contribution &nbsp; <sup>†</sup> Corresponding authors
 </p>
 
-<p><a href="https://openreview.net/forum?id=r7zfsysr22">📄 Paper (OpenReview)</a> &nbsp;·&nbsp; <a href="#quick-start">🚀 Quick start</a> &nbsp;·&nbsp; <a href="#citation">Citation</a> &nbsp;·&nbsp; <a href="README_zh.md">中文</a></p>
+<p><a href="">📄 Paper</a> &nbsp;·&nbsp; <a href="#quick-start">🚀 Quick start</a> &nbsp;·&nbsp; <a href="#citation">Citation</a></p>
 
 </div>
 
@@ -83,7 +83,7 @@ CUDA_VISIBLE_DEVICES=0 uv run examples/piperx_real/infer.py \
   title={PerturBot: Breaking Shortcut Priors in Vision-Language-Action Models with Perturbative Training},
   author={Mingyu Liu and Chonghao Sima and Tianjian Feng and Hanqing Wang and Cong Chen and Hao Chen and Chunhua Shen},
   year={2026},
-  url={https://openreview.net/forum?id=r7zfsysr22}
+  url={}
 }
 ```
 
