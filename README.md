@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1><img src="docs/assets/perturbot-logo.svg" width="35" alt="PerturBot logo"> PerturBot: Breaking Shortcut Priors in<br>Vision-Language-Action Models with Perturbative Training</h1>
+<h2><img src="docs/assets/perturbot-logo.svg" width="35" alt="PerturBot logo"> PerturBot: Breaking Shortcut Priors in<br>Vision-Language-Action Models with Perturbative Training</h2>
 
 <p>
   <a href="https://mingyulau.github.io/"><b>Mingyu Liu</b></a><sup>1,2,*</sup> · <a href="https://chonghaosima.github.io/"><b>Chonghao Sima</b></a><sup>3,*</sup> · <a href=""><b>Tianjian Feng</b></a><sup>1</sup> · <a href="https://hq-king.github.io/"><b>Hanqing Wang</b></a><sup>4</sup><br>
