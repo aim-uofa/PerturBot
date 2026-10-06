@@ -3,8 +3,8 @@
 <h2><img src="docs/assets/perturbot-logo.svg" width="35" alt="PerturBot logo"> PerturBot: Breaking Shortcut Priors in<br>Vision-Language-Action Models with Perturbative Training</h2>
 
 <p>
-  <a href="https://mingyulau.github.io/"><b>Mingyu Liu</b></a><sup>1,2,*</sup> · <a href="https://chonghaosima.github.io/"><b>Chonghao Sima</b></a><sup>3,*</sup> · <a href=""><b>Tianjian Feng</b></a><sup>1</sup> · <a href="https://hq-king.github.io/"><b>Hanqing Wang</b></a><sup>4</sup><br>
-  <a href=""><b>Cong Chen</b></a><sup>1</sup> · <a href="https://stan-haochen.github.io/"><b>Hao Chen</b></a><sup>1,†</sup> · <a href="https://cshen.github.io/"><b>Chunhua Shen</b></a><sup>1,†</sup>
+  <a href="https://mingyulau.github.io/"><b>Mingyu Liu</b></a><sup>1,2,*</sup> · <a href="https://chonghaosima.github.io/"><b>Chonghao Sima</b></a><sup>3,*</sup> · <a href="https://scholar.google.com/citations?user=VoRlYR8AAAAJ&amp;hl=en"><b>Tianjian Feng</b></a><sup>1</sup> · <a href="https://hq-king.github.io/"><b>Hanqing Wang</b></a><sup>4</sup><br>
+  <a href="https://scholar.google.com/citations?user=kwDXTpAAAAAJ&amp;hl=en"><b>Cong Chen</b></a><sup>1</sup> · <a href="https://stan-haochen.github.io/"><b>Hao Chen</b></a><sup>1,†</sup> · <a href="https://cshen.github.io/"><b>Chunhua Shen</b></a><sup>1,†</sup>
 </p>
 
 <p>
