@@ -13,7 +13,7 @@
   <sup>*</sup> Equal contribution &nbsp; <sup>†</sup> Corresponding authors
 </p>
 
-<p><a href="">📄 Paper</a> &nbsp;·&nbsp; <a href="#quick-start">🚀 Quick start</a> &nbsp;·&nbsp; <a href="#citation">Citation</a></p>
+<p><a href="https://arxiv.org/pdf/2610.04616">📄 Paper</a> &nbsp;·&nbsp; <a href="https://arxiv.org/abs/2610.04616">arXiv</a> &nbsp;·&nbsp; <a href="#quick-start">🚀 Quick start</a> &nbsp;·&nbsp; <a href="#citation">Citation</a></p>
 
 </div>
 
@@ -83,7 +83,10 @@ CUDA_VISIBLE_DEVICES=0 uv run examples/piperx_real/infer.py \
   title={PerturBot: Breaking Shortcut Priors in Vision-Language-Action Models with Perturbative Training},
   author={Mingyu Liu and Chonghao Sima and Tianjian Feng and Hanqing Wang and Cong Chen and Hao Chen and Chunhua Shen},
   year={2026},
-  url={}
+  eprint={2610.04616},
+  archivePrefix={arXiv},
+  primaryClass={cs.RO},
+  url={https://arxiv.org/abs/2610.04616}
 }
 ```
 
